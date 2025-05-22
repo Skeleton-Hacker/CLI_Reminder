@@ -14,6 +14,14 @@ pub enum RecurrenceType {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Priority {
+    Low,
+    Medium,
+    High,
+    Urgent,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Reminder {
     pub id: String,
     pub text: String,
@@ -22,6 +30,7 @@ pub struct Reminder {
     pub created_at: DateTime<Local>,
     pub last_notified: Option<DateTime<Local>>,
     pub completed: bool,
+    pub priority: Priority,
 }
 
 impl Reminder {
@@ -34,6 +43,7 @@ impl Reminder {
             created_at: Local::now(),
             last_notified: None,
             completed: false,
+            priority: Priority::Medium, // Default priority
         }
     }
 

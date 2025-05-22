@@ -71,6 +71,23 @@ pub enum Commands {
 
     /// Export reminders as JSON
     Export,
+
+    /// Show statistics about reminders
+    Stats,
+
+    /// Search for reminders
+    Search {
+        /// Search term to match against reminder text
+        #[arg(short, long)]
+        query: String,
+    },
+
+    /// Show detailed help about available commands
+    Help {
+        /// Get help about a specific command
+        #[arg(short, long)]
+        command: Option<String>,
+    },
 }
 
 // Helper functions for parsing input
