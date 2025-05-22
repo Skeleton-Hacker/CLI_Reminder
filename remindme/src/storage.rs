@@ -1,5 +1,5 @@
+use anyhow::{anyhow, Context, Result}; // Added anyhow macro here
 use crate::reminder::Reminder;
-use anyhow::{Context, Result};
 use serde_json;
 use std::fs::{self, File};
 use std::io::{Read, Write};
@@ -12,8 +12,8 @@ pub struct Storage {
 impl Storage {
     pub fn new() -> Result<Self> {
         let config_dir = dirs::config_dir()
-            .context("Failed to determine config directory")?
-            .join("remind-rs");
+            .ok_or_else(|| anyhow!("Failed to determine config directory"))?
+            .join("remindme"); // Changed from "remind-rs" to "remindme"
         
         // Create directory if it doesn't exist
         fs::create_dir_all(&config_dir)?;

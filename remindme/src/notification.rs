@@ -1,6 +1,7 @@
 use crate::reminder::Reminder;
 use crate::storage::Storage;
 use anyhow::Result;
+use notify_rust::Notification; 
 
 pub struct Notifier {
     storage: Storage,
@@ -23,7 +24,6 @@ impl Notifier {
                 println!("REMINDER: {}", reminder.text);
                 
                 // Send desktop notification if requested
-                #[cfg(not(target_os = "windows"))]
                 if send_desktop {
                     self.send_desktop_notification(reminder)?;
                 }
@@ -37,16 +37,18 @@ impl Notifier {
         Ok(due_reminders)
     }
     
-    #[cfg(not(target_os = "windows"))]
     fn send_desktop_notification(&self, reminder: &Reminder) -> Result<()> {
-        use notify_rust::Notification;
+        // Add a print statement for debugging
+        println!("Attempting to send desktop notification for: {}", reminder.text);
         
         Notification::new()
-            .summary("Reminder")
+            .summary("RemindMe Reminder")
             .body(&reminder.text)
-            .timeout(5000) // milliseconds
+            .icon("appointment-soon")  // Use a standard icon
+            .timeout(5000)  // 5 seconds
             .show()?;
         
+        println!("Desktop notification sent successfully");
         Ok(())
     }
 }
