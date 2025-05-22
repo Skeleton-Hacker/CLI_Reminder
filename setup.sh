@@ -15,11 +15,24 @@ command -v cargo >/dev/null 2>&1 || { echo -e "${RED}Error: Rust/Cargo is requir
 command -v systemctl >/dev/null 2>&1 || { echo -e "${RED}Warning: systemctl not found. Automatic notifications might not work.${NC}"; }
 
 # Define key paths
-PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_DIR="$SCRIPT_DIR/remindme"
 BINARY_NAME="remindme"
 INSTALL_DIR="$HOME/.local/bin"
 CONFIG_DIR="$HOME/.config/remindme"
 SYSTEMD_DIR="$HOME/.config/systemd/user"
+
+# Check if project directory exists
+if [ ! -d "$PROJECT_DIR" ]; then
+    echo -e "${RED}Error: Project directory $PROJECT_DIR not found.${NC}"
+    exit 1
+fi
+
+# Check if Cargo.toml exists
+if [ ! -f "$PROJECT_DIR/Cargo.toml" ]; then
+    echo -e "${RED}Error: Cargo.toml not found in $PROJECT_DIR.${NC}"
+    exit 1
+fi
 
 echo -e "${YELLOW}Building RemindMe from source...${NC}"
 cd "$PROJECT_DIR"
