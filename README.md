@@ -1,4 +1,4 @@
-# RemindMe - Command Line Reminder Application
+# RemindMe 
 
 RemindMe is a CLI reminder application written in Rust. It provides a simple way to manage reminders directly from your terminal, with automatic desktop notifications when reminders are due, without the need to be connected to the internet.
 
@@ -23,7 +23,6 @@ RemindMe is a CLI reminder application written in Rust. It provides a simple way
 1. Clone this repository:
    ```bash
    git clone https://github.com/Skeleton-Hacker/CLI_Reminder.git
-   cd remindme
    ```
 
 2. Run the setup script:
@@ -33,7 +32,7 @@ RemindMe is a CLI reminder application written in Rust. It provides a simple way
 
 The script will:
 - Build the application from source
-- Install it to your ~/.local/bin directory
+- Install it to your `~/.local/bin` directory
 - Set up systemd services for automatic notifications
 - Create an uninstall script and documentation
 
