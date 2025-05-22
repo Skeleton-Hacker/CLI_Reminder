@@ -1,5 +1,5 @@
 [package]
-name = "remind_rs"
+name = "remindme"
 version = "0.1.0"
 edition = "2024"
 
