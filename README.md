@@ -109,6 +109,30 @@ After installation, RemindMe will check for due reminders every minute and displ
 
 All reminders are stored in `~/.config/remindme/reminders.json`. While you shouldn't need to edit this file directly, it's a simple JSON format for your reminders.
 
+## TUI Mode
+
+RemindMe now features an interactive Text User Interface (TUI) mode:
+
+'''bash
+# Launch RemindMe in TUI mode
+remindme --tui
+'''
+
+In TUI mode, you can:
+- View all reminders in a scrollable list
+- Add new reminders with a form interface
+- Delete reminders with a single keystroke
+- Navigate with keyboard shortcuts
+
+### TUI Keyboard Shortcuts
+
+- `q`: Quit the application
+- `a`: Add a new reminder
+- `d`: Delete the selected reminder
+- `h`: View help screen
+- `l`: Return to reminder list
+- `↑/↓`: Navigate through reminders
+
 ## Uninstallation
 
 To uninstall RemindMe:
