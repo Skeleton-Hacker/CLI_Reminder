@@ -57,16 +57,15 @@ fn run() -> Result<()> {
     
     // Handle commands
     match cli.command {
-        Commands::Add { text, time, recurrence } => {
-            let due_time = cli::parse_datetime(&time)
-                .context("Failed to parse date and time")?;
-            let recurrence_type = cli::parse_recurrence(&recurrence)
-                .context("Failed to parse recurrence")?;
+        Commands::Add { text, time, date, recurrence } => {
+            // Use the helper function to parse time with default date logic
+            let due_time = cli::parse_datetime_with_default_date(&time, date.as_deref())?;
             
+            let recurrence_type = cli::parse_recurrence(&recurrence)?;
             let reminder = Reminder::new(text, due_time, recurrence_type);
             storage.add_reminder(reminder)?;
             println!("Reminder added successfully.");
-        }
+        },
         
         Commands::List => {
             let reminders = storage.load()?;
@@ -183,11 +182,11 @@ fn run() -> Result<()> {
                 match cmd.to_lowercase().as_str() {
                     "add" => {
                         println!("Add a new reminder:");
-                        println!("  remind add --text \"Your reminder text\" --time \"YYYY-MM-DD HH:MM\" [--recurrence daily|weekly|monthly|yearly] [--priority low|medium|high|urgent]");
+                        println!("  remind add --text \"Your reminder text\" --time \"HH:MM\" [--date \"YYYY-MM-DD\"] [--recurrence daily|weekly|monthly|yearly] [--priority low|medium|high|urgent]");
                         println!("\nExamples:");
-                        println!("  remind add --text \"Team meeting\" --time \"2025-05-24 10:00\"");
-                        println!("  remind add --text \"Daily standup\" --time \"2025-05-23 09:00\" --recurrence daily");
-                        println!("  remind add --text \"Urgent deadline\" --time \"2025-05-30 17:00\" --priority high");
+                        println!("  remind add --text \"Team meeting\" --time \"10:00\" --date \"2025-05-24\"");
+                        println!("  remind add --text \"Daily standup\" --time \"09:00\" --recurrence daily");
+                        println!("  remind add --text \"Urgent deadline\" --time \"17:00\" --date \"2025-05-30\" --priority high");
                     },
                     "list" => {
                         println!("List all reminders:");
@@ -257,7 +256,7 @@ fn display_general_help() {
     println!("  remind help --command COMMAND");
     
     println!("\nEXAMPLES:");
-    println!("  remind add --text \"Team meeting\" --time \"2025-05-24 10:00\"");
+    println!("  remind add --text \"Team meeting\" --time \"10:00\" --date \"2025-05-24\"");
     println!("  remind list");
     println!("  remind notify --desktop");
     println!("  remind help --command add");

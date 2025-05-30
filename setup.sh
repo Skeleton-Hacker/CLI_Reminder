@@ -213,11 +213,66 @@ else
 fi
 
 # Offer to create a test reminder
+# Offer to create test reminders
 echo
-read -p "Would you like to create a test reminder for 1 minute from now? (y/N) " -n 1 -r
+echo -e "${YELLOW}Test Options:${NC}"
+echo "1) Create a basic test reminder (1 minute from now)"
+echo "2) Test default date logic (today or tomorrow based on time)"
+echo "3) Test recurring reminder"
+echo "4) Skip test reminders"
+read -p "Select an option (1-4): " test_option
 echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    FUTURE_TIME=$(date -d '+1 minutes' '+%Y-%m-%d %H:%M')
-    $INSTALL_DIR/$BINARY_NAME add --text "Test reminder from setup" --time "$FUTURE_TIME"
-    echo -e "${GREEN}Test reminder created for $FUTURE_TIME. You should receive a notification when it's due.${NC}"
-fi
+
+case $test_option in
+    1)
+        # Get current time + 2 minutes
+        CURRENT_HOUR=$(date +%H)
+        MINUTES=$(date -d '+2 minutes' +%M)
+        TEST_TIME="${CURRENT_HOUR}:${MINUTES}"
+        
+        # Test with only time parameter (should use default date)
+        $INSTALL_DIR/$BINARY_NAME add --text "Test with default date" --time "$TEST_TIME"
+        
+        # Also test with explicit date parameter
+        TOMORROW=$(date -d 'tomorrow' '+%Y-%m-%d')
+        $INSTALL_DIR/$BINARY_NAME add --text "Test with explicit date" --time "$TEST_TIME" --date "$TOMORROW"
+        
+        echo -e "${GREEN}Created two test reminders:${NC}"
+        echo "1. For time $TEST_TIME (should use today as default date)"
+        echo "2. For time $TEST_TIME with explicit date $TOMORROW"
+        echo -e "${YELLOW}Running 'remindme list' to show results:${NC}"
+        $INSTALL_DIR/$BINARY_NAME list
+        ;;
+    2)
+        # Current hour and 5 minutes from now
+        CURRENT_HOUR=$(date +%H)
+        FIVE_MIN_LATER=$(date -d '+5 minutes' +%M)
+        TEST_TIME="${CURRENT_HOUR}:${FIVE_MIN_LATER}"
+        
+        # Time that's probably tomorrow (3 AM)
+        EARLY_MORNING="03:00"
+        
+        # Add reminders with just the time parameter
+        $INSTALL_DIR/$BINARY_NAME add --text "Test current day default" --time "$TEST_TIME"
+        $INSTALL_DIR/$BINARY_NAME add --text "Test next day default" --time "$EARLY_MORNING"
+        
+        echo -e "${GREEN}Created two test reminders:${NC}"
+        echo "1. Using time $TEST_TIME (should use today's date)"
+        echo "2. Using time $EARLY_MORNING (likely uses tomorrow's date)"
+        echo -e "${YELLOW}Running 'remindme list' to show results:${NC}"
+        $INSTALL_DIR/$BINARY_NAME list
+        ;;
+    3)
+        # Create a daily recurring reminder for 9 AM
+        $INSTALL_DIR/$BINARY_NAME add --text "Daily recurring reminder" --time "09:00" --recurrence daily
+        echo -e "${GREEN}Created a daily recurring reminder for 9:00 AM${NC}"
+        echo -e "${YELLOW}Running 'remindme list' to show results:${NC}"
+        $INSTALL_DIR/$BINARY_NAME list
+        ;;
+    4)
+        echo "Skipping test reminders."
+        ;;
+    *)
+        echo "Invalid option. Skipping test reminders."
+        ;;
+esac

@@ -20,9 +20,13 @@ pub enum Commands {
         #[arg(short, long)]
         text: String,
 
-        /// Due date and time (YYYY-MM-DD HH:MM)
-        #[arg(short = 'd', long)]
+        /// Time of the reminder (HH:MM), date will default to today or tomorrow
+        #[arg(short = 't', long)]
         time: String,
+
+        /// Date of the reminder (YYYY-MM-DD), defaults to today/tomorrow based on time
+        #[arg(short = 'd', long)]
+        date: Option<String>,
 
         /// Recurrence pattern (none, daily, weekly, monthly, yearly)
         #[arg(short, long, default_value = "none")]
@@ -98,6 +102,38 @@ pub fn parse_datetime(datetime_str: &str) -> Result<DateTime<Local>> {
     let local_datetime = Local.from_local_datetime(&naive_datetime)
         .single()
         .context("Failed to convert to local datetime")?;
+    
+    Ok(local_datetime)
+}
+
+pub fn parse_datetime_with_default_date(time_str: &str, date_option: Option<&str>) -> Result<DateTime<Local>> {
+    // Get current date/time
+    let now = Local::now();
+    
+    // Parse the time part
+    let time_format = "%H:%M";
+    let naive_time = chrono::NaiveTime::parse_from_str(time_str, time_format)
+        .context("Invalid time format. Expected HH:MM")?;
+    
+    // If date is provided, use it
+    if let Some(date_str) = date_option {
+        let date_time_str = format!("{} {}", date_str, time_str);
+        return parse_datetime(&date_time_str);
+    }
+    
+    // Otherwise use today's date
+    let today = now.date_naive();
+    let naive_datetime = today.and_time(naive_time);
+    
+    // Convert to DateTime<Local>
+    let mut local_datetime = Local.from_local_datetime(&naive_datetime)
+        .single()
+        .context("Failed to convert to local datetime")?;
+    
+    // If the time today has already passed, use tomorrow instead
+    if local_datetime < now {
+        local_datetime = local_datetime + chrono::Duration::days(1);
+    }
     
     Ok(local_datetime)
 }
