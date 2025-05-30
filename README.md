@@ -9,6 +9,7 @@ RemindMe is a CLI reminder application written in Rust. It provides a simple way
 - **Desktop Notifications**: Get notified with desktop alerts when reminders are due
 - **Automatic Background Checks**: System integration checks for due reminders every minute
 - **Flexible Management**: List, add, edit, and delete reminders easily
+- **Smart Date Defaults**: Automatically uses today or tomorrow when only time is specified
 
 ## Installation
 
@@ -44,11 +45,14 @@ The script will:
 # Show help and available commands
 remindme help
 
-# Add a new reminder
-remindme add --text "Buy groceries" --time "2023-09-15 18:00"
+# Add a new reminder (with automatic date selection)
+remindme add --text "Buy groceries" --time "18:00"
+
+# Add a reminder with specific date
+remindme add --text "Doctor appointment" --time "14:30" --date "2023-09-18"
 
 # Add a recurring reminder
-remindme add --text "Weekly team meeting" --time "2023-09-18 10:00" --recurrence weekly
+remindme add --text "Weekly team meeting" --time "10:00" --recurrence weekly
 
 # List all reminders
 remindme list
@@ -60,7 +64,7 @@ remindme delete --id c7613d0e
 remindme delete --index 2
 
 # Edit a reminder
-remindme edit --id c7613d0e --text "Updated reminder text" --time "2023-09-16 10:00"
+remindme edit --id c7613d0e --text "Updated reminder text" --time "10:00"
 
 # Check for due reminders manually
 remindme notify
@@ -72,7 +76,12 @@ remindme notify --desktop
 
 **Adding Reminders**:
 ```bash
-remindme add --text "Your reminder text" --time "YYYY-MM-DD HH:MM" [--recurrence daily|weekly|monthly|yearly]
+# Basic syntax
+remindme add --text "Your reminder text" --time "HH:MM" [--date "YYYY-MM-DD"] [--recurrence daily|weekly|monthly|yearly]
+
+# When only time is provided, date defaults to:
+# - Today if the time hasn't passed yet
+# - Tomorrow if the time has already passed today
 ```
 
 **Listing Reminders**:
@@ -82,7 +91,7 @@ remindme list
 
 **Editing Reminders**:
 ```bash
-remindme edit --id [ID] [--text "New text"] [--time "YYYY-MM-DD HH:MM"] [--recurrence none|daily|weekly|monthly|yearly]
+remindme edit --id [ID] [--text "New text"] [--time "HH:MM"] [--date "YYYY-MM-DD"] [--recurrence none|daily|weekly|monthly|yearly]
 ```
 
 **Deleting Reminders**:
