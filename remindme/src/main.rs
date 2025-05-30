@@ -3,7 +3,8 @@ mod reminder;
 mod storage;
 mod notification;
 mod utils;
-mod tui;  // Add this new module
+mod tui;  
+mod sound;
 
 use anyhow::{Context, Result};
 use clap::Parser;

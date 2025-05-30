@@ -1,10 +1,11 @@
 use crate::reminder::Reminder;
 use crate::storage::Storage;
+use crate::sound;
 use anyhow::Result;
-use notify_rust::Notification; 
+use notify_rust::Notification;
 
 pub struct Notifier {
-    storage: Storage,
+    pub storage: Storage,
 }
 
 impl Notifier {
@@ -38,15 +39,21 @@ impl Notifier {
     }
     
     fn send_desktop_notification(&self, reminder: &Reminder) -> Result<()> {
-        // Add a print statement for debugging
-        println!("Attempting to send desktop notification for: {}", reminder.text);
+        println!("Sending desktop notification for: {}", reminder.text);
         
+        // Show the notification
         Notification::new()
             .summary("RemindMe Reminder")
             .body(&reminder.text)
-            .icon("appointment-soon")  // Use a standard icon
-            .timeout(5000)  // 5 seconds
+            .icon("appointment-soon")
+            .timeout(5000)
             .show()?;
+        
+        // Play notification sound
+        if let Err(e) = sound::play_notification_sound() {
+            // Just log the error but don't fail the notification
+            println!("Failed to play notification sound: {}", e);
+        }
         
         println!("Desktop notification sent successfully");
         Ok(())
