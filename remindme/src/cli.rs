@@ -21,13 +21,13 @@ pub struct Cli {
 pub enum Commands {
     /// Add a new reminder
     Add {
-        /// Text of the reminder
-        #[arg(short, long)]
-        text: String,
-
         /// Time of the reminder (HH:MM), date will default to today or tomorrow
-        #[arg(short = 't', long)]
+        #[arg(short, long)] // Change from -t to -i for time
         time: String,
+        
+        /// Text of the reminder
+        #[arg(short = 'x', long)] // This will use -t by default based on first letter
+        text: String,
 
         /// Date of the reminder (YYYY-MM-DD), defaults to today/tomorrow based on time
         #[arg(short = 'd', long)]
@@ -48,7 +48,7 @@ pub enum Commands {
         id: Option<String>,
         
         /// Index of the reminder to delete (as shown in list)
-        #[arg(short, long, group = "delete_selector")]
+        #[arg(short = 'n', long, group = "delete_selector")]
         index: Option<usize>,
     },
     
@@ -59,11 +59,11 @@ pub enum Commands {
         id: String,
         
         /// New text for the reminder
-        #[arg(short, long)]
+        #[arg(short = 'x', long)]
         text: Option<String>,
         
         /// New time for the reminder (YYYY-MM-DD HH:MM)
-        #[arg(short = 't', long)]
+        #[arg(short = 'd', long)]
         time: Option<String>,
         
         /// New recurrence pattern

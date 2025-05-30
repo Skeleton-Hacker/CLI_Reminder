@@ -50,7 +50,7 @@ fn is_critical_error(error: &anyhow::Error) -> bool {
 
 fn run() -> Result<()> {
     // Initialize the storage
-    let storage = Storage::new()
+    let mut storage = Storage::new()
         .context("Failed to initialize storage")?;
     
     // Parse command line arguments
@@ -131,7 +131,7 @@ fn run() -> Result<()> {
         }
         
         Some(Commands::Notify { desktop }) => {
-            let notifier = Notifier::new(storage);
+            let mut notifier = Notifier::new(storage);
             let due_reminders = notifier.check_due_reminders(desktop)?;
             
             if due_reminders.is_empty() {

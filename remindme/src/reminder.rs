@@ -47,6 +47,19 @@ impl Reminder {
         }
     }
 
+    pub fn new_with_id(id: String, text: String, due_time: DateTime<Local>, recurrence: RecurrenceType) -> Self {
+        Self {
+            id,
+            text,
+            due_time,
+            recurrence,
+            completed: false,
+            created_at: Local::now(),
+            last_notified: None, // Add this field
+            priority: Priority::Medium, // Add this field
+        }
+    }
+
     pub fn is_due(&self) -> bool {
         let now = Local::now();
         self.due_time <= now && !self.completed && 

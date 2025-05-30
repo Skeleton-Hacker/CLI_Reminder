@@ -12,7 +12,7 @@ impl Notifier {
         Notifier { storage }
     }
 
-    pub fn check_due_reminders(&self, send_desktop: bool) -> Result<Vec<Reminder>> {
+    pub fn check_due_reminders(&mut self, send_desktop: bool) -> Result<Vec<Reminder>> {
         let mut reminders = self.storage.load()?;
         let mut due_reminders = Vec::new();
         

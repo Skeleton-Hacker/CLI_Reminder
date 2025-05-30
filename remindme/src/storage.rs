@@ -80,22 +80,17 @@ impl Storage {
         Ok(true)
     }
 
-    pub fn update_reminder(&self, updated_reminder: Reminder) -> Result<bool> {
+    pub fn update_reminder(&mut self, updated_reminder: Reminder) -> Result<()> {
         let mut reminders = self.load()?;
-        let found = reminders.iter_mut().any(|r| {
-            if r.id == updated_reminder.id {
-                *r = updated_reminder.clone();
-                true
-            } else {
-                false
-            }
-        });
         
-        if found {
+        // Find and replace the reminder with the same ID
+        if let Some(pos) = reminders.iter().position(|r| r.id == updated_reminder.id) {
+            reminders[pos] = updated_reminder;
             self.save(&reminders)?;
+            Ok(())
+        } else {
+            Err(anyhow::anyhow!("Reminder not found"))
         }
-        
-        Ok(found)
     }
 
     pub fn get_reminder_by_id(&self, id: &str) -> Result<Option<Reminder>> {
