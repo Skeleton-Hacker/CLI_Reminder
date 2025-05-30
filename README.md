@@ -113,10 +113,10 @@ All reminders are stored in `~/.config/remindme/reminders.json`. While you shoul
 
 RemindMe now features an interactive Text User Interface (TUI) mode:
 
-'''bash
+```bash
 # Launch RemindMe in TUI mode
 remindme --tui
-'''
+```
 
 In TUI mode, you can:
 - View all reminders in a scrollable list
@@ -128,6 +128,7 @@ In TUI mode, you can:
 
 - `q`: Quit the application
 - `a`: Add a new reminder
+- `e`: Edit a current reminder
 - `d`: Delete the selected reminder
 - `h`: View help screen
 - `l`: Return to reminder list
