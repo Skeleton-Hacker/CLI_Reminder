@@ -3,6 +3,7 @@ mod reminder;
 mod storage;
 mod notification;
 mod utils;
+mod tui;  // Add this new module
 
 use anyhow::{Context, Result};
 use clap::Parser;
@@ -55,9 +56,14 @@ fn run() -> Result<()> {
     // Parse command line arguments
     let cli = Cli::parse();
     
-    // Handle commands
+    // If TUI mode is requested, start the TUI
+    if cli.tui {
+        return tui::start_tui(storage);
+    }
+    
+    // Otherwise, continue with CLI mode
     match cli.command {
-        Commands::Add { text, time, date, recurrence } => {
+        Some(Commands::Add { text, time, date, recurrence }) => {
             // Use the helper function to parse time with default date logic
             let due_time = cli::parse_datetime_with_default_date(&time, date.as_deref())?;
             
@@ -67,7 +73,7 @@ fn run() -> Result<()> {
             println!("Reminder added successfully.");
         },
         
-        Commands::List => {
+        Some(Commands::List) => {
             let reminders = storage.load()?;
             if reminders.is_empty() {
                 println!("No reminders found.");
@@ -79,7 +85,7 @@ fn run() -> Result<()> {
             }
         }
         
-        Commands::Delete { id, index } => {
+        Some(Commands::Delete { id, index }) => {
             if let Some(id_str) = id {
                 let success = storage.delete_reminder(&id_str)?;
                 if success {
@@ -101,7 +107,7 @@ fn run() -> Result<()> {
             }
         }
         
-        Commands::Edit { id, text, time, recurrence } => {
+        Some(Commands::Edit { id, text, time, recurrence }) => {
             let reminder_option = storage.get_reminder_by_id(&id)?;
             
             if let Some(mut reminder) = reminder_option {
@@ -124,7 +130,7 @@ fn run() -> Result<()> {
             }
         }
         
-        Commands::Notify { desktop } => {
+        Some(Commands::Notify { desktop }) => {
             let notifier = Notifier::new(storage);
             let due_reminders = notifier.check_due_reminders(desktop)?;
             
@@ -135,14 +141,14 @@ fn run() -> Result<()> {
             }
         }
         
-        Commands::Export => {
+        Some(Commands::Export) => {
             let reminders = storage.load()?;
             let json = serde_json::to_string_pretty(&reminders)
                 .context("Failed to serialize reminders")?;
             println!("{}", json);
         }
 
-        Commands::Stats => {
+        Some(Commands::Stats) => {
             let reminders = storage.load()?;
             let total = reminders.len();
             let completed = reminders.iter().filter(|r| r.completed).count();
@@ -161,7 +167,7 @@ fn run() -> Result<()> {
             println!("  Overdue: {}", overdue);
         }
 
-        Commands::Search { query } => {
+        Some(Commands::Search { query }) => {
             let reminders = storage.load()?;
             let matches: Vec<_> = reminders.iter()
                 .filter(|r| r.text.to_lowercase().contains(&query.to_lowercase()))
@@ -177,7 +183,7 @@ fn run() -> Result<()> {
             }
         }
 
-        Commands::Help { command } => {
+        Some(Commands::Help { command }) => {
             if let Some(cmd) = command {
                 match cmd.to_lowercase().as_str() {
                     "add" => {
@@ -227,6 +233,11 @@ fn run() -> Result<()> {
                 display_general_help();
             }
         },
+        
+        None => {
+            // If no command was provided and not in TUI mode, show help
+            display_general_help();
+        }
     }
     
     Ok(())
