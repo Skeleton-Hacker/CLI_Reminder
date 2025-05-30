@@ -79,8 +79,8 @@ cat > "$SYSTEMD_DIR/remindme-check.timer" << EOF
 Description=Periodically check for due reminders
 
 [Timer]
-OnBootSec=1min
-OnUnitActiveSec=1min
+OnBootSec=1s
+OnUnitActiveSec=1s
 AccuracySec=1s
 
 [Install]
