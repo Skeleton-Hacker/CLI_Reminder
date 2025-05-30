@@ -150,6 +150,7 @@ EOF
 chmod +x "$CONFIG_DIR/uninstall.sh"
 
 # Create a user guide
+# Update the user guide to include TUI information
 echo -e "${YELLOW}Creating user guide...${NC}"
 cat > "$CONFIG_DIR/README.md" << EOF
 # RemindMe - CLI Reminder Application
@@ -177,7 +178,35 @@ remindme delete --index [INDEX]
 
 # Check for notifications manually
 remindme notify --desktop
+
+# Launch the TUI mode
+remindme --tui
 \`\`\`
+
+## TUI Mode
+
+RemindMe features an interactive Text User Interface (TUI) mode:
+
+\`\`\`bash
+remindme --tui
+\`\`\`
+
+In TUI mode, you can:
+- View all reminders in a scrollable list
+- Add new reminders with a form interface
+- Edit existing reminders
+- Delete reminders with a single keystroke
+- Navigate with keyboard shortcuts
+
+### TUI Keyboard Shortcuts
+
+- \`q\`: Quit the application
+- \`a\`: Add a new reminder
+- \`e\`: Edit the selected reminder
+- \`d\`: Delete the selected reminder
+- \`h\`: View help screen
+- \`l\`: Return to reminder list
+- \`↑/↓\`: Navigate through reminders
 
 ## Automatic Notifications
 
@@ -198,29 +227,15 @@ To uninstall RemindMe, run:
 
 EOF
 
-echo -e "${GREEN}Installation complete!${NC}"
-echo -e "You can now use the command '${YELLOW}remindme${NC}' from anywhere in your terminal."
-echo -e "Try '${YELLOW}remindme help${NC}' to see all available commands."
-echo -e "\nReminders will be checked automatically every minute."
-echo -e "Documentation saved to: ${BLUE}~/.config/remindme/README.md${NC}"
-echo -e "${BLUE}========================================${NC}"
-
-# Test if the command is in PATH now
-if command -v remindme >/dev/null 2>&1; then
-    echo -e "${GREEN}RemindMe successfully installed in PATH!${NC}"
-else
-    echo -e "${YELLOW}Note: You may need to restart your terminal or run 'source ~/.bashrc' to use the 'remindme' command.${NC}"
-fi
-
-# Offer to create a test reminder
-# Offer to create test reminders
+# Update the test options to include TUI mode
 echo
 echo -e "${YELLOW}Test Options:${NC}"
-echo "1) Create a basic test reminder (1 minute from now)"
+echo "1) Create a basic test reminder (2 minutes from now)"
 echo "2) Test default date logic (today or tomorrow based on time)"
 echo "3) Test recurring reminder"
-echo "4) Skip test reminders"
-read -p "Select an option (1-4): " test_option
+echo "4) Launch TUI mode"
+echo "5) Skip test reminders"
+read -p "Select an option (1-5): " test_option
 echo
 
 case $test_option in
@@ -270,6 +285,11 @@ case $test_option in
         $INSTALL_DIR/$BINARY_NAME list
         ;;
     4)
+        # Launch the TUI mode
+        echo -e "${YELLOW}Launching TUI mode. Use 'q' to quit when done.${NC}"
+        $INSTALL_DIR/$BINARY_NAME --tui
+        ;;
+    5)
         echo "Skipping test reminders."
         ;;
     *)
