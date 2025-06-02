@@ -103,7 +103,7 @@ remindme delete --index [NUMBER]
 
 ## Automatic Notifications
 
-After installation, RemindMe will check for due reminders every minute and display desktop notifications automatically. This is handled by a systemd user service.
+After installation, RemindMe will check for due reminders every second and display desktop notifications automatically. This is handled by a systemd user service.
 
 ## Configuration
 
